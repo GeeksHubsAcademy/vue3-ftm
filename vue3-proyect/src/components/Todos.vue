@@ -1,17 +1,13 @@
 <script setup>
 import TodoItem from '@comps/TodoItem.vue'
-import { ref, nextTick, computed, watch } from 'vue'
+import { ref, nextTick, computed, watch, watchEffect } from 'vue'
 
 
-
+const initialTodos = JSON.parse(localStorage.getItem('todos')) || [];
 
 const state = ref({
   newTodoText: '',
-  todos: [
-    { id: 1, text: 'Learn Vue 3', done: true },
-    { id: 2, text: 'Learn React', done: false },
-    { id: 3, text: 'Build something awesome', done: false },
-  ]
+  todos: initialTodos
 })
 
 const completedTodos = computed(() => {
@@ -23,7 +19,28 @@ const completedTodos = computed(() => {
 
 watch(completedTodos, (val) => {
   document.title = `Completed todos: ${val}`
-}, { immediate: true })
+}, { immediate: true });
+
+
+
+// watchEffect( () => {
+//   console.log('watch');
+//   localStorage.setItem('todos', JSON.stringify(state.value.todos));
+// });
+
+
+// watch(() => state.value.todos.length, () => {
+//   console.log('watch');
+//   localStorage.setItem('todos', JSON.stringify(state.value.todos));
+// });
+
+
+watch(state.value.todos, () => {
+  console.log('watch');
+  localStorage.setItem('todos', JSON.stringify(state.value.todos));
+}, { deep: false });
+
+
 
 
 function createNewTodo(e) {
