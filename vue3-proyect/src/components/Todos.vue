@@ -1,55 +1,78 @@
 <script setup>
 import TodoItem from '@comps/TodoItem.vue'
-import { ref } from 'vue'
+import { ref, nextTick, computed, watch } from 'vue'
 
-const newTodoText = ref('')
 
-const todos = ref([
-  // { id: 1, text: 'Learn Vue 3', done: true },
-  // { id: 2, text: 'Learn React', done: false },
-  // { id: 3, text: 'Build something awesome', done: false },
-]);
 
+
+const state = ref({
+  newTodoText: '',
+  todos: [
+    { id: 1, text: 'Learn Vue 3', done: true },
+    { id: 2, text: 'Learn React', done: false },
+    { id: 3, text: 'Build something awesome', done: false },
+  ]
+})
+
+const completedTodos = computed(() => {
+  console.log('computed');
+  return state.value.todos.filter(todo => todo.done).length
+})
+
+
+
+watch(completedTodos, (val) => {
+  document.title = `Completed todos: ${val}`
+}, { immediate: true })
 
 
 function createNewTodo(e) {
   e.preventDefault();
   const newTodo = {
     id: Date.now(),
-    text: newTodoText.value,
+    text: state.value.newTodoText,
     done: false
   };
-  todos.value.push(newTodo);
-  newTodoText.value = ''
+  state.value.todos.push(newTodo);
+  state.value.newTodoText = ''
 }
 
 function updateTodo(todo) {
   todo.done = !todo.done
 }
 
-function handleDelete(event) {
+async function handleDelete(event) {
   const id = event;
-  const index = todos.value.findIndex(todo => todo.id === id);
-  todos.value.splice(index, 1);
+  const index = state.value.todos.findIndex(todo => todo.id === id);
+  state.value.todos.splice(index, 1);
+  await nextTick()
+  console.log(document.querySelectorAll('article').length);
 }
+
 </script>
 
 <template>
   <div>
     <form @submit="e => createNewTodo(e)">
       <input type="text"
-        v-model="newTodoText">
+        v-model="state.newTodoText">
       <button> crear</button>
 
     </form>
+    <section>
+      completed: {{ completedTodos }} / {{ state.todos.length }}
+
+    </section>
     <ul>
-      <li v-for="todo of todos">
+      <li v-for="todo of state.todos">
         <todo-item :data="todo"
-        @toggle-done="todo.done = !todo.done"
-        @delete-todo="handleDelete"
-        />
+          @toggle-done="() => updateTodo(todo)"
+          @delete-todo="handleDelete" />
       </li>
     </ul>
+    <pre>
+      {{ state }}
+    </pre>
   </div>
 </template>
 <style scoped>

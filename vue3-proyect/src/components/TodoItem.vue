@@ -16,8 +16,8 @@ onUpdated(() => {
 });
 
 onUnmounted(() => {
-    console.log('unmounted', data);
-    document.title = 'unmounted';
+    // document.title = 'unmounted';
+    console.log('unmounted');
 
 });
 
@@ -52,8 +52,10 @@ function handleChange() {
 <template>
     <article :data-text="props.data.text">
         <input type="checkbox"
-            @change="handleChange" />
-        <span :style="{ textDecoration: !props.data.done ? 'line-through' : 'none' }">{{ props.data.text }}</span><span
+            @change="handleChange"
+            :checked="props.data.done"
+            />
+        <span :style="{ textDecoration: props.data.done ? 'line-through' : 'none' }">{{ props.data.text }}</span><span
             :style="{ color: 'grey', fontSize: '0.6em', padding: '5px' }">{{ JSON.stringify(props.data) }}</span>
             <button @click="$emit('deleteTodo', props.data.id)">X</button>
     </article>
