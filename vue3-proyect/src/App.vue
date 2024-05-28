@@ -20,13 +20,20 @@ onUnmounted(() => {
   clearInterval(timer);
 });
 
+const bg = ref('tomato');
+
+
+provide('changeBg', (color) => {
+  bg.value = color;
+});
+
 </script>
 
 <template>
-  <section>
+  <section :style="{backgroundColor: bg}">
     <Todos />
   </section>
-  <Footer></Footer>
+  <Footer ></Footer>
 
 </template>
 
