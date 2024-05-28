@@ -1,16 +1,37 @@
 <script setup>
-import Todos from './components/Todos.vue'
+import Todos from './components/Todos/Todos.vue';
+import Footer from './components/Footer/Footer.vue';
+
+import { provide, onMounted, onUnmounted, ref } from 'vue';
+
+let timer = null;
+const today = ref(new Date().toLocaleTimeString())
+provide('today', today);
+
+
+onMounted(() => {
+  timer = setInterval(() => {
+    console.log('timer');
+    today.value = new Date().toLocaleTimeString();
+  }, 1000);
+});
+
+onUnmounted(() => {
+  clearInterval(timer);
+});
+
 </script>
 
 <template>
   <section>
     <Todos />
   </section>
+  <Footer></Footer>
 
 </template>
 
-<style scoped>
-section {
+<style>
+body {
 
   height: 100vh;
 
